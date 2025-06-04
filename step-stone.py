@@ -1,30 +1,64 @@
 import streamlit as st
-import pandas as pd
 
-st.set_page_config(layout="wide")
-st.title("Tabel Interaktif Dua Nilai per Sel")
+st.set_page_config(page_title="Transportation Optimizer", layout="wide")
 
-# Ukuran tabel (ubah sesuai kebutuhan)
-rows = 3
-cols = 4
+st.title("🚚 Transportation Problem Solver")
+st.write("This app helps solve the Transportation Problem using the Least Cost Method and optimize it with the Stepping Stone Method.")
 
-# Inisialisasi data dua dimensi (setiap sel = [sub_value, main_value])
-data = [[{'sub': '', 'main': ''} for _ in range(cols)] for _ in range(rows)]
+# Tabs for logical steps
+tab1, tab2, tab3, tab4 = st.tabs([
+    "🧮 Input", 
+    "📉 Least Cost", 
+    "🔁 Stepping Stone", 
+    "✅ Final"
+])
 
-# Fungsi untuk menampilkan dan mengedit sel individual
-def render_table(data):
+with tab1:
+    st.header("Step 1: Input Problem")
+
+    rows = st.number_input("Number of supply sources (rows)", min_value=1, value=3, key="rows")
+    cols = st.number_input("Number of demand destinations (columns)", min_value=1, value=3, key="cols")
+
+    st.subheader("Enter Cost Matrix")
+    cost_matrix = []
     for i in range(rows):
-        cols_list = st.columns(cols)
+        row = []
+        cols_input = st.columns(cols)
         for j in range(cols):
-            with cols_list[j]:
-                st.markdown(f"**Sel ({i+1},{j+1})**")
-                sub_val = st.text_input(f"Sub-{i}-{j}", value=data[i][j]['sub'], label_visibility="collapsed")
-                main_val = st.text_input(f"Main-{i}-{j}", value=data[i][j]['main'], label_visibility="collapsed")
-                data[i][j]['sub'] = sub_val
-                data[i][j]['main'] = main_val
-                st.markdown(f"<div style='position: relative; height: 60px; border: 1px solid white; padding: 4px; background: black; color: white;'>"
-                            f"<div style='position: absolute; top: 2px; left: 4px; font-size: 14px;'>{sub_val}</div>"
-                            f"<div style='position: absolute; bottom: 2px; right: 4px; font-size: 16px;'>{main_val}</div>"
-                            f"</div>", unsafe_allow_html=True)
+            with cols_input[j]:
+                value = st.number_input(f"Cost[{i},{j}]", value=0, key=f"cost_{i}_{j}")
+                row.append(value)
+        cost_matrix.append(row)
 
-render_table(data)
+    st.subheader("Enter Supply and Demand")
+    supply = []
+    demand = []
+
+    supply_cols = st.columns(rows)
+    for i in range(rows):
+        with supply_cols[i]:
+            s = st.number_input(f"Supply[{i}]", value=0, key=f"supply_{i}")
+            supply.append(s)
+
+    demand_cols = st.columns(cols)
+    for j in range(cols):
+        with demand_cols[j]:
+            d = st.number_input(f"Demand[{j}]", value=0, key=f"demand_{j}")
+            demand.append(d)
+
+    st.write("Cost Matrix:")
+    st.table(cost_matrix)
+    st.write("Supply:", supply)
+    st.write("Demand:", demand)
+
+with tab2:
+    st.header("Step 2: Initial Feasible Solution (Least Cost Method)")
+    st.info("🚧 This section will show the initial allocation matrix after applying the Least Cost Method. Work in progress.")
+
+with tab3:
+    st.header("Step 3: Optimize Using Stepping Stone Method")
+    st.info("🚧 This section will show each iteration of optimization using the Stepping Stone Method. Work in progress.")
+
+with tab4:
+    st.header("Step 4: Final Optimized Transportation Table")
+    st.info("🚧 Final result will be displayed here after optimization is complete. Work in progress.")
